@@ -4,8 +4,8 @@ A data-driven projection of the 2026 FIFA World Cup, from the group stage all th
 
 The result is a single, self-contained web dashboard (no servers, no databases, no build step) plus a master spreadsheet with all the underlying numbers.
 
-> **Live page:** `https://YOUR-USERNAME.github.io/REPO-NAME/`
-> *(replace with your own URL once GitHub Pages is enabled)*
+> **Live page:** `https://vixbee.github.io/mundial-2026/`
+
 
 ---
 
