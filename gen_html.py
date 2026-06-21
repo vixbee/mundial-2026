@@ -273,6 +273,9 @@ bs=sum(blend.values());blend={nm:blend[nm]/bs for nm in blend}
 chb=sorted(names,key=lambda nm:blend[nm],reverse=True)[:12]
 D["champions"]=[{"es":nm,"en":EN[nm],"p":round(blend[nm],3),"pmodel":round(pmodel[nm],3),"pmkt":round(pmkt.get(nm,0.0),3)} for nm in chb]
 D["blend_w"]=WB
-D["generated"]="20 jun 2026"
+import datetime as _dt
+_M=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"]
+_n=_dt.datetime.utcnow()-_dt.timedelta(hours=6)
+D["generated"]=f"{_n.day} {_M[_n.month-1]} {_n.year}, {_n.strftime('%H:%M')} CDMX"
 json.dump(D,open("wcdata.json","w"),ensure_ascii=False)
 print("data ready; blended top:",chb[0],round(blend[chb[0]],3),"| modelo",round(pmodel[chb[0]],3),"| mercado",round(pmkt.get(chb[0],0),3))
