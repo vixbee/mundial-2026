@@ -1,3 +1,19 @@
-{"Francia":370,"España":550,"Inglaterra":600,"Argentina":800,"Portugal":1000,"Brasil":1100,
- "Alemania":1300,"Países Bajos":1700,"Estados Unidos":3000,"Noruega":3300,"Marruecos":3300,
- "Bélgica":4000,"Colombia":4500,"Japón":5500,"México":5500,"Suiza":7000,"Uruguay":8000}
+{
+ "Francia": 370,
+ "España": 550,
+ "Inglaterra": 600,
+ "Argentina": 800,
+ "Portugal": 1000,
+ "Brasil": 1200,
+ "Alemania": 1200,
+ "Países Bajos": 1500,
+ "Noruega": 3000,
+ "Estados Unidos": 3300,
+ "Marruecos": 3500,
+ "Bélgica": 3500,
+ "Colombia": 4000,
+ "Japón": 4500,
+ "México": 5000,
+ "Uruguay": 7000,
+ "Suiza": 8000
+}
