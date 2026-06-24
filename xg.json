@@ -98,5 +98,33 @@
  "Túnez|Japón": [
   0.05,
   2.13
+ ],
+ "España|Arabia Saudita": [
+  2.3,
+  0.16
+ ],
+ "Bélgica|Irán": [
+  1.9,
+  0.68
+ ],
+ "Uruguay|Cabo Verde": [
+  2.17,
+  0.96
+ ],
+ "Nueva Zelanda|Egipto": [
+  1.29,
+  1.96
+ ],
+ "Portugal|Uzbekistán": [
+  2.59,
+  0.33
+ ],
+ "Noruega|Senegal": [
+  2.06,
+  1.69
+ ],
+ "Inglaterra|Ghana": [
+  1.4,
+  0.18
  ]
 }
