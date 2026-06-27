@@ -266,7 +266,7 @@ D["knockout"]={"octavos":octavos,"cuartos":cuartos,"semis":semis,
 ODDS=json.load(open("odds.json",encoding="utf-8"))
 imp={nm:100.0/(o+100.0) for nm,o in ODDS.items()};ssum=sum(imp.values())
 pmkt={nm:imp[nm]/ssum for nm in imp}
-WB=0.7
+WB=0.8
 pmodel={names[i]:champ[i]/N for i in range(NT)}
 blend={nm:WB*pmkt.get(nm,0.0)+(1-WB)*pmodel[nm] for nm in names}
 bs=sum(blend.values());blend={nm:blend[nm]/bs for nm in blend}
