@@ -184,22 +184,21 @@ def match_thirds(advg):
         return False
     bt(0);return assign
 GL=list("ABCDEFGHIJKL")
-r16=[("M89","M74","M77"),("M90","M73","M75"),("M91","M76","M78"),("M92","M79","M80"),
-     ("M93","M83","M84"),("M94","M81","M82"),("M95","M86","M88"),("M96","M85","M87")]
-qf=[("M97","M89","M90"),("M98","M93","M94"),("M99","M91","M92"),("M100","M95","M96")]
+_REAL32=[("M73","Sudáfrica","Canadá"),("M74","Países Bajos","Marruecos"),("M75","Alemania","Paraguay"),
+("M76","Francia","Suecia"),("M77","Costa de Marfil","Noruega"),("M78","Brasil","Japón"),
+("M79","Inglaterra","RD Congo"),("M80","México","Ecuador"),("M81","Estados Unidos","Bosnia y Herzegovina"),
+("M82","Bélgica","Senegal"),("M83","España","Austria"),("M84","Portugal","Croacia"),
+("M85","Suiza","Argelia"),("M86","Colombia","Ghana"),("M87","Australia","Egipto"),("M88","Argentina","Cabo Verde")]
+M32IDX={mid:(idx[a],idx[b]) for mid,a,b in _REAL32}
+r16=[("M89","M73","M74"),("M90","M75","M76"),("M91","M77","M78"),("M92","M79","M80"),
+     ("M93","M81","M82"),("M94","M83","M84"),("M95","M85","M86"),("M96","M87","M88")]
+qf=[("M97","M89","M90"),("M98","M91","M92"),("M99","M93","M94"),("M100","M95","M96")]
 sf=[("M101","M97","M98"),("M102","M99","M100")]
 oct=np.zeros(NT);cua=np.zeros(NT);sem=np.zeros(NT);fin=np.zeros(NT);champ=np.zeros(NT)
 U=rng.random((N,31))
 r32order=["M73","M74","M75","M76","M77","M78","M79","M80","M81","M82","M83","M84","M85","M86","M87","M88"]
 for t in range(N):
-    F=FIRST[t];Sd=SEC[t];Th=THIRD[t]
-    advg=[GL[gp] for gp in range(12) if qmask[t,gp]];am=match_thirds(advg)
-    third={sid:Th[gpos[am[sid]]] for sid in am}
-    W={GL[gp]:F[gp] for gp in range(12)};R={GL[gp]:Sd[gp] for gp in range(12)}
-    m={"M73":(R["A"],R["B"]),"M74":(W["E"],third["M74"]),"M75":(W["F"],R["C"]),"M76":(W["C"],R["F"]),
-       "M77":(W["I"],third["M77"]),"M78":(R["E"],R["I"]),"M79":(W["A"],third["M79"]),"M80":(W["L"],third["M80"]),
-       "M81":(W["D"],third["M81"]),"M82":(W["G"],third["M82"]),"M83":(R["K"],R["L"]),"M84":(W["H"],R["J"]),
-       "M85":(W["B"],third["M85"]),"M86":(W["J"],R["H"]),"M87":(W["K"],third["M87"]),"M88":(R["D"],R["G"])}
+    m=M32IDX  # bracket fijo real; grupos completos
     win={};ui=0
     for sid in r32order:
         a,b=m[sid];w=a if U[t,ui]<Padv[a,b] else b;ui+=1;win[sid]=w;oct[w]+=1
@@ -221,16 +220,18 @@ for g in glist:
 advg8=[g for g,_ in sorted(Thp.items(),key=lambda kv:kv[1],reverse=True)[:8]]
 amap=match_thirds(advg8)
 def sl(t_,c): return f"{t_} ({c})"
-def thr(sid): return sl(Thm[amap[sid]],f"3º {amap[sid]}")
-R32=[("M73","28 jun","SoFi, Los Ángeles",sl(Rm['A'],'2A'),sl(Rm['B'],'2B')),
- ("M74","29 jun","Gillette, Boston",sl(Wm['E'],'1E'),thr("M74")),("M75","29 jun","Estadio BBVA, Monterrey",sl(Wm['F'],'1F'),sl(Rm['C'],'2C')),
- ("M76","29 jun","NRG, Houston",sl(Wm['C'],'1C'),sl(Rm['F'],'2F')),("M77","30 jun","MetLife, Nueva York/NJ",sl(Wm['I'],'1I'),thr("M77")),
- ("M78","30 jun","AT&T, Dallas",sl(Rm['E'],'2E'),sl(Rm['I'],'2I')),("M79","30 jun","Estadio Azteca, CDMX",sl(Wm['A'],'1A'),thr("M79")),
- ("M80","1 jul","",sl(Wm['L'],'1L'),thr("M80")),("M81","1 jul","",sl(Wm['D'],'1D'),thr("M81")),
- ("M82","1 jul","",sl(Wm['G'],'1G'),thr("M82")),("M83","2 jul","BMO Field, Toronto",sl(Rm['K'],'2K'),sl(Rm['L'],'2L')),
- ("M84","2 jul","SoFi, Los Ángeles",sl(Wm['H'],'1H'),sl(Rm['J'],'2J')),("M85","2 jul","BC Place, Vancouver",sl(Wm['B'],'1B'),thr("M85")),
- ("M86","3 jul","Hard Rock, Miami",sl(Wm['J'],'1J'),sl(Rm['H'],'2H')),("M87","3 jul","Arrowhead, Kansas City",sl(Wm['K'],'1K'),thr("M87")),
- ("M88","3 jul","AT&T, Dallas",sl(Rm['D'],'2D'),sl(Rm['G'],'2G'))]
+_WIN={"México","Suiza","Brasil","Estados Unidos","Alemania","Países Bajos","Bélgica","España","Francia","Argentina","Colombia","Inglaterra"}
+_RUN={"Sudáfrica","Canadá","Marruecos","Australia","Costa de Marfil","Japón","Egipto","Cabo Verde","Noruega","Austria","Portugal","Croacia"}
+def qc(nm): return "1.º grupo" if nm in _WIN else ("2.º grupo" if nm in _RUN else "3.º")
+_R32T=[("M73","28 jun","SoFi, Los Ángeles","Sudáfrica","Canadá"),("M74","29 jun","Estadio BBVA, Monterrey","Países Bajos","Marruecos"),
+ ("M75","29 jun","Gillette, Boston","Alemania","Paraguay"),("M76","30 jun","MetLife, NY/NJ","Francia","Suecia"),
+ ("M77","30 jun","AT&T, Dallas","Costa de Marfil","Noruega"),("M78","29 jun","NRG, Houston","Brasil","Japón"),
+ ("M79","1 jul","Mercedes-Benz, Atlanta","Inglaterra","RD Congo"),("M80","1 jul","Estadio Azteca, CDMX","México","Ecuador"),
+ ("M81","1 jul","Bay Area, San Francisco","Estados Unidos","Bosnia y Herzegovina"),("M82","1 jul","Lumen Field, Seattle","Bélgica","Senegal"),
+ ("M83","2 jul","SoFi, Los Ángeles","España","Austria"),("M84","2 jul","BMO Field, Toronto","Portugal","Croacia"),
+ ("M85","2 jul","BC Place, Vancouver","Suiza","Argelia"),("M86","3 jul","Arrowhead, Kansas City","Colombia","Ghana"),
+ ("M87","3 jul","AT&T, Dallas","Australia","Egipto"),("M88","3 jul","Hard Rock, Miami","Argentina","Cabo Verde")]
+R32=[(mid,dt,ve,sl(a,qc(a)),sl(b,qc(b))) for mid,dt,ve,a,b in _R32T]
 
 # ================= WORKBOOK =================
 wb=Workbook(); FONT="Arial"
