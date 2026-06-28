@@ -126,5 +126,77 @@
  "Inglaterra|Ghana": [
   1.4,
   0.18
+ ],
+ "Argentina|Austria": [
+  2.62,
+  0.5
+ ],
+ "Francia|Irak": [
+  2.38,
+  0.6
+ ],
+ "Jordania|Argelia": [
+  0.63,
+  1.89
+ ],
+ "Panamá|Croacia": [
+  0.54,
+  1.63
+ ],
+ "Colombia|RD Congo": [
+  0.98,
+  0.37
+ ],
+ "Bosnia y Herzegovina|Catar": [
+  1.57,
+  1.02
+ ],
+ "República Checa|México": [
+  0.47,
+  1.79
+ ],
+ "Sudáfrica|Corea del Sur": [
+  1.1,
+  1.0
+ ],
+ "Escocia|Brasil": [
+  1.13,
+  4.46
+ ],
+ "Curazao|Costa de Marfil": [
+  0.5,
+  1.31
+ ],
+ "Ecuador|Alemania": [
+  1.27,
+  0.65
+ ],
+ "Japón|Suecia": [
+  1.31,
+  0.61
+ ],
+ "Túnez|Países Bajos": [
+  0.62,
+  1.85
+ ],
+ "Turquía|Estados Unidos": [
+  2.71,
+  2.06
+ ],
+ "Paraguay|Australia": [
+  0.24,
+  0.55
+ ],
+ "Egipto|Irán": [
+  0.84,
+  1.97
+ ],
+ "Nueva Zelanda|Bélgica": [
+  0.25,
+  3.65
+ ],
+ "Cabo Verde|Arabia Saudita": [
+  1.52,
+  0.4
  ]
 }
