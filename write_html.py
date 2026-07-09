@@ -239,7 +239,8 @@ function renderKO(){
  function tie(m){
   const aw=m.w==="a", bw=m.w==="b";
   const played=m.done===1;
-  const v=m.venue?`<div class="ko-ven">${m.date} · ${m.venue}${played?` · ${T[lang].finalLabel}: ${m.score}`:''}</div>`:"";
+  const when=m.time?`${m.date} · ${m.time}`:m.date;
+  const v=m.venue?`<div class="ko-ven">${when} · ${m.venue}${played?` · ${T[lang].finalLabel}: ${m.score}`:''}</div>`:"";
   return `<div class="ko-tie"><div class="ko-team${aw?' kw':''}">${nm(m.a)}</div><div class="ko-team${bw?' kw':''}">${nm(m.b)}</div>${v}</div>`;
  }
  function round(title,arr){return `<div class="ko-round"><div class="ko-h">${title}</div>${arr.map(tie).join("")}</div>`;}

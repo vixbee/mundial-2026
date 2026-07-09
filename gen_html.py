@@ -267,6 +267,9 @@ KOVEN={"M89":("4 jul","NRG Stadium, Houston"),"M90":("4 jul","Lincoln Financial 
  "M99":("11 jul","Hard Rock Stadium, Miami"),"M100":("11 jul","Arrowhead Stadium, Kansas City"),
  "M101":("14 jul","AT&T Stadium, Dallas"),"M102":("15 jul","Mercedes-Benz, Atlanta"),
  "M103":("18 jul","Hard Rock Stadium, Miami"),"M104":("19 jul","MetLife, Nueva York/NJ")}
+# Horarios oficiales (hora CDMX) de cuartos, semifinales, tercer lugar y final
+KOTIME={"M97":"14:00","M98":"13:00","M99":"15:00","M100":"19:00",
+ "M101":"13:00","M102":"13:00","M103":"15:00","M104":"13:00"}
 win={mid:(REAL_KO_IDX[mid] if mid in REAL_KO_IDX else cw(*m32[mid])) for mid in ro}
 def rnd(pairs):
     out=[]
@@ -274,6 +277,7 @@ def rnd(pairs):
         a,b=win[x],win[y]; w=REAL_KO_IDX[mid] if mid in REAL_KO_IDX else cw(a,b); win[mid]=w
         dt,ve=KOVEN.get(mid,("",""))
         out.append({"mid":mid,"a":nmo(a),"b":nmo(b),"w":"a" if w==a else "b","date":dt,"venue":ve,
+                    "time":KOTIME.get(mid,""),
                     "done":1 if mid in REAL_KO else 0,"score":REAL_KO.get(mid,("",""))[1]})
     return out
 octavos=rnd(r16); cuartos=rnd(qf); semis=rnd(sf)
@@ -281,9 +285,9 @@ fa,fb=win["M101"],win["M102"]; champ_idx=cw(fa,fb)
 sl1=cl(win["M97"],win["M98"]); sl2=cl(win["M99"],win["M100"]); third3=cw(sl1,sl2)
 fd,fv=KOVEN["M104"]; td,tv=KOVEN["M103"]
 D["knockout"]={"octavos":octavos,"cuartos":cuartos,"semis":semis,
- "final":{"mid":"M104","a":nmo(fa),"b":nmo(fb),"w":"a" if champ_idx==fa else "b","date":fd,"venue":fv},
+ "final":{"mid":"M104","a":nmo(fa),"b":nmo(fb),"w":"a" if champ_idx==fa else "b","date":fd,"venue":fv,"time":KOTIME["M104"]},
  "champion":nmo(champ_idx),"champion_p":round(champ[champ_idx]/N,3),
- "third":{"a":nmo(sl1),"b":nmo(sl2),"w":"a" if third3==sl1 else "b","date":td,"venue":tv}}
+ "third":{"a":nmo(sl1),"b":nmo(sl2),"w":"a" if third3==sl1 else "b","date":td,"venue":tv,"time":KOTIME["M103"]}}
 ODDS=json.load(open("odds.json",encoding="utf-8"))
 imp={nm:100.0/(o+100.0) for nm,o in ODDS.items()};ssum=sum(imp.values())
 pmkt={nm:imp[nm]/ssum for nm in imp}

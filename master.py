@@ -424,7 +424,8 @@ def ko_block(ws,title,rows_,r0):
         ws.cell(row=r0,column=1,value=m.get("mid","—")).alignment=ctr
         ws.cell(row=r0,column=2,value=m["a"]["es"]).alignment=lft
         ws.cell(row=r0,column=3,value=m["b"]["es"]).alignment=lft
-        sede=(m.get("date","")+" · "+m.get("venue","")).strip(" ·")
+        fecha_hora=m.get("date","")+(" "+m["time"]+"h" if m.get("time") else "")
+        sede=(fecha_hora+" · "+m.get("venue","")).strip(" ·")
         ws.cell(row=r0,column=4,value=sede).alignment=lft
         winc=2 if m["w"]=="a" else 3
         for ci in range(1,5):
