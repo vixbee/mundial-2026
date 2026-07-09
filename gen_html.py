@@ -193,6 +193,15 @@ REAL32=[("M73","Sudáfrica","Canadá"),("M74","Países Bajos","Marruecos"),("M75
 ("M82","Bélgica","Senegal"),("M83","España","Austria"),("M84","Portugal","Croacia"),
 ("M85","Suiza","Argelia"),("M86","Colombia","Ghana"),("M87","Australia","Egipto"),("M88","Argentina","Cabo Verde")]
 M32IDX={mid:(idx[a],idx[b]) for mid,a,b in REAL32}
+# Resultados reales confirmados: Round of 32 (28 jun-3 jul) y Round of 16 (4-7 jul 2026)
+REAL_KO={"M73":("Canadá","1–0"),"M74":("Marruecos","1–1 (pens)"),"M75":("Paraguay","1–1 (pens)"),
+ "M76":("Francia","3–0"),"M77":("Noruega","2–1"),"M78":("Brasil","2–1"),"M79":("Inglaterra","2–1"),
+ "M80":("México","2–0"),"M81":("Estados Unidos","2–0"),"M82":("Bélgica","3–2 (aet)"),"M83":("España","3–0"),
+ "M84":("Portugal","2–1"),"M85":("Suiza","2–0"),"M86":("Colombia","1–0"),"M87":("Egipto","1–1 (pens)"),
+ "M88":("Argentina","3–2 (aet)"),"M89":("Marruecos","3–0"),"M90":("Francia","1–0"),"M91":("Noruega","2–1"),
+ "M92":("Inglaterra","3–2"),"M93":("Bélgica","4–1"),"M94":("España","1–0"),"M95":("Suiza","0–0 (pens)"),
+ "M96":("Argentina","3–2")}
+REAL_KO_IDX={mid:idx[nm] for mid,(nm,_) in REAL_KO.items()}
 r16=[("M89","M73","M74"),("M90","M75","M76"),("M91","M77","M78"),("M92","M79","M80"),("M93","M81","M82"),("M94","M83","M84"),("M95","M85","M86"),("M96","M87","M88")]
 qf=[("M97","M89","M90"),("M98","M91","M92"),("M99","M93","M94"),("M100","M95","M96")];sf=[("M101","M97","M98"),("M102","M99","M100")]
 oct=np.zeros(NT);cua=np.zeros(NT);sem=np.zeros(NT);fin=np.zeros(NT);champ=np.zeros(NT);U=rng.random((N,31))
@@ -203,9 +212,9 @@ for t in range(N):
     m=M32IDX  # bracket fijo real; los grupos ya terminaron
     win={};ui=0
     for sid in ro:
-        a,b=m[sid];w=a if U[t,ui]<Padv[a,b] else b;ui+=1;win[sid]=w;oct[w]+=1
+        a,b=m[sid];w=REAL_KO_IDX[sid] if sid in REAL_KO_IDX else (a if U[t,ui]<Padv[a,b] else b);ui+=1;win[sid]=w;oct[w]+=1
     for sid,x,y in r16:
-        a,b=win[x],win[y];w=a if U[t,ui]<Padv[a,b] else b;ui+=1;win[sid]=w;cua[w]+=1
+        a,b=win[x],win[y];w=REAL_KO_IDX[sid] if sid in REAL_KO_IDX else (a if U[t,ui]<Padv[a,b] else b);ui+=1;win[sid]=w;cua[w]+=1
     for sid,x,y in qf:
         a,b=win[x],win[y];w=a if U[t,ui]<Padv[a,b] else b;ui+=1;win[sid]=w;sem[w]+=1
     for sid,x,y in sf:
@@ -242,7 +251,8 @@ for g,date,home,hr,away,ar in data:
         gh,ga=real; md["done"]=1; md["sc"]=f"{gh}–{ga}"
         md["res"]="draw" if gh==ga else ("home" if gh>ga else "away")
     D["groups"][g]["matches"].append(md)
-D["bracket"]=[{"mid":mid,"date":dt,"venue":ve,"e1":bsides[mid][0],"e2":bsides[mid][1]} for mid,dt,ve in brk_meta]
+D["bracket"]=[{"mid":mid,"date":dt,"venue":ve,"e1":bsides[mid][0],"e2":bsides[mid][1],
+ "done":1 if mid in REAL_KO else 0,"score":REAL_KO.get(mid,("",""))[1],"winner":REAL_KO.get(mid,("",""))[0]} for mid,dt,ve in brk_meta]
 # Proyección de llaves: avanza el favorito por el modelo (condicionado a resultados reales)
 def ti(nm): return idx[nm]
 m32={mid:(ti(bsides[mid][0]["es"]),ti(bsides[mid][1]["es"])) for mid in ro}
@@ -257,13 +267,14 @@ KOVEN={"M89":("4 jul","NRG Stadium, Houston"),"M90":("4 jul","Lincoln Financial 
  "M99":("11 jul","Hard Rock Stadium, Miami"),"M100":("11 jul","Arrowhead Stadium, Kansas City"),
  "M101":("14 jul","AT&T Stadium, Dallas"),"M102":("15 jul","Mercedes-Benz, Atlanta"),
  "M103":("18 jul","Hard Rock Stadium, Miami"),"M104":("19 jul","MetLife, Nueva York/NJ")}
-win={mid:cw(*m32[mid]) for mid in ro}
+win={mid:(REAL_KO_IDX[mid] if mid in REAL_KO_IDX else cw(*m32[mid])) for mid in ro}
 def rnd(pairs):
     out=[]
     for mid,x,y in pairs:
-        a,b=win[x],win[y]; w=cw(a,b); win[mid]=w
+        a,b=win[x],win[y]; w=REAL_KO_IDX[mid] if mid in REAL_KO_IDX else cw(a,b); win[mid]=w
         dt,ve=KOVEN.get(mid,("",""))
-        out.append({"mid":mid,"a":nmo(a),"b":nmo(b),"w":"a" if w==a else "b","date":dt,"venue":ve})
+        out.append({"mid":mid,"a":nmo(a),"b":nmo(b),"w":"a" if w==a else "b","date":dt,"venue":ve,
+                    "done":1 if mid in REAL_KO else 0,"score":REAL_KO.get(mid,("",""))[1]})
     return out
 octavos=rnd(r16); cuartos=rnd(qf); semis=rnd(sf)
 fa,fb=win["M101"],win["M102"]; champ_idx=cw(fa,fb)

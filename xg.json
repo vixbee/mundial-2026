@@ -278,5 +278,21 @@
  "México|Inglaterra": [
   2.54,
   1.53
+ ],
+ "Estados Unidos|Bélgica": [
+  0.67,
+  2.15
+ ],
+ "España|Portugal": [
+  1.77,
+  0.6
+ ],
+ "Suiza|Colombia": [
+  0.29,
+  0.42
+ ],
+ "Egipto|Argentina": [
+  0.97,
+  2.9
  ]
 }

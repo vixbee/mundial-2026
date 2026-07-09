@@ -87,6 +87,7 @@ main{max-width:1080px;margin:0 auto;padding:18px 14px 40px}
 .ko-team{font-size:13px;padding:7px 9px}
 .ko-team+.ko-team{border-top:1px solid var(--line)}
 .ko-team.kw{background:var(--green-bg);color:var(--green-fg);font-weight:700}
+.bteam.kw{background:var(--green-bg);color:var(--green-fg);font-weight:700;border-radius:6px}
 .ko-ven{font-size:10px;color:var(--muted);padding:5px 9px;border-top:1px dashed var(--line);background:#fafbfe}
 .champ-banner{margin-top:14px;background:linear-gradient(120deg,var(--blue-900),var(--blue-700));color:#fff;border-radius:10px;padding:14px 16px;font-size:15px;text-align:center;border:2px solid var(--gold)}
 .champ-banner b{color:var(--gold)}
@@ -212,10 +213,13 @@ function fmtCode(c){return c.startsWith("3:")?T[lang].third(c.slice(2)):c}
 function renderBracket(){
  let h=`<div class="gh">${T[lang].r32}</div><div class="grid2">`;
  for(const b of DATA.bracket){
-  h+=`<div class="card">
+  const done=b.done===1;
+  const w1=done&&b.winner===b.e1.es?' kw':'', w2=done&&b.winner===b.e2.es?' kw':'';
+  h+=`<div class="card${done?' done':''}">
     <div class="bk"><span class="mno">${b.mid}</span><span class="ven">${b.date} · ${b.venue}</span></div>
-    <div class="bteam"><span class="code">${fmtCode(b.e1.code)}</span><span>${nm(b.e1)}</span></div>
-    <div class="bteam"><span class="code">${fmtCode(b.e2.code)}</span><span>${nm(b.e2)}</span></div>
+    <div class="bteam${w1}"><span class="code">${fmtCode(b.e1.code)}</span><span>${nm(b.e1)}</span></div>
+    <div class="bteam${w2}"><span class="code">${fmtCode(b.e2.code)}</span><span>${nm(b.e2)}</span></div>
+    ${done?`<div class="finbox">${T[lang].finalLabel}: ${b.score}</div>`:''}
   </div>`;
  }
  h+="</div>";
@@ -234,7 +238,8 @@ function renderKO(){
  const K=DATA.knockout; if(!K){return;}
  function tie(m){
   const aw=m.w==="a", bw=m.w==="b";
-  const v=m.venue?`<div class="ko-ven">${m.date} · ${m.venue}</div>`:"";
+  const played=m.done===1;
+  const v=m.venue?`<div class="ko-ven">${m.date} · ${m.venue}${played?` · ${T[lang].finalLabel}: ${m.score}`:''}</div>`:"";
   return `<div class="ko-tie"><div class="ko-team${aw?' kw':''}">${nm(m.a)}</div><div class="ko-team${bw?' kw':''}">${nm(m.b)}</div>${v}</div>`;
  }
  function round(title,arr){return `<div class="ko-round"><div class="ko-h">${title}</div>${arr.map(tie).join("")}</div>`;}

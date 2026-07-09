@@ -190,6 +190,15 @@ _REAL32=[("M73","Sudáfrica","Canadá"),("M74","Países Bajos","Marruecos"),("M7
 ("M82","Bélgica","Senegal"),("M83","España","Austria"),("M84","Portugal","Croacia"),
 ("M85","Suiza","Argelia"),("M86","Colombia","Ghana"),("M87","Australia","Egipto"),("M88","Argentina","Cabo Verde")]
 M32IDX={mid:(idx[a],idx[b]) for mid,a,b in _REAL32}
+# Resultados reales confirmados: Round of 32 (28 jun-3 jul) y Round of 16 (4-7 jul 2026)
+REAL_KO={"M73":("Canadá","1–0"),"M74":("Marruecos","1–1 (pens)"),"M75":("Paraguay","1–1 (pens)"),
+ "M76":("Francia","3–0"),"M77":("Noruega","2–1"),"M78":("Brasil","2–1"),"M79":("Inglaterra","2–1"),
+ "M80":("México","2–0"),"M81":("Estados Unidos","2–0"),"M82":("Bélgica","3–2 (aet)"),"M83":("España","3–0"),
+ "M84":("Portugal","2–1"),"M85":("Suiza","2–0"),"M86":("Colombia","1–0"),"M87":("Egipto","1–1 (pens)"),
+ "M88":("Argentina","3–2 (aet)"),"M89":("Marruecos","3–0"),"M90":("Francia","1–0"),"M91":("Noruega","2–1"),
+ "M92":("Inglaterra","3–2"),"M93":("Bélgica","4–1"),"M94":("España","1–0"),"M95":("Suiza","0–0 (pens)"),
+ "M96":("Argentina","3–2")}
+REAL_KO_IDX={mid:idx[nm] for mid,(nm,_) in REAL_KO.items()}
 r16=[("M89","M73","M74"),("M90","M75","M76"),("M91","M77","M78"),("M92","M79","M80"),
      ("M93","M81","M82"),("M94","M83","M84"),("M95","M85","M86"),("M96","M87","M88")]
 qf=[("M97","M89","M90"),("M98","M91","M92"),("M99","M93","M94"),("M100","M95","M96")]
@@ -201,9 +210,9 @@ for t in range(N):
     m=M32IDX  # bracket fijo real; grupos completos
     win={};ui=0
     for sid in r32order:
-        a,b=m[sid];w=a if U[t,ui]<Padv[a,b] else b;ui+=1;win[sid]=w;oct[w]+=1
+        a,b=m[sid];w=REAL_KO_IDX[sid] if sid in REAL_KO_IDX else (a if U[t,ui]<Padv[a,b] else b);ui+=1;win[sid]=w;oct[w]+=1
     for sid,x,y in r16:
-        a,b=win[x],win[y];w=a if U[t,ui]<Padv[a,b] else b;ui+=1;win[sid]=w;cua[w]+=1
+        a,b=win[x],win[y];w=REAL_KO_IDX[sid] if sid in REAL_KO_IDX else (a if U[t,ui]<Padv[a,b] else b);ui+=1;win[sid]=w;cua[w]+=1
     for sid,x,y in qf:
         a,b=win[x],win[y];w=a if U[t,ui]<Padv[a,b] else b;ui+=1;win[sid]=w;sem[w]+=1
     for sid,x,y in sf:
