@@ -200,10 +200,11 @@ REAL_KO={"M73":("Canadá","1–0"),"M74":("Marruecos","1–1 (pens)"),"M75":("Pa
  "M84":("Portugal","2–1"),"M85":("Suiza","2–0"),"M86":("Colombia","1–0"),"M87":("Egipto","1–1 (pens)"),
  "M88":("Argentina","3–2 (aet)"),"M89":("Marruecos","3–0"),"M90":("Francia","1–0"),"M91":("Noruega","2–1"),
  "M92":("Inglaterra","3–2"),"M93":("Bélgica","4–1"),"M94":("España","1–0"),"M95":("Suiza","0–0 (pens)"),
- "M96":("Argentina","3–2")}
+ "M96":("Argentina","3–2"),
+ "M97":("Francia","2–0"),"M98":("Inglaterra","2–1"),"M99":("España","2–1"),"M100":("Argentina","3–1 (aet)")}
 REAL_KO_IDX={mid:idx[nm] for mid,(nm,_) in REAL_KO.items()}
 r16=[("M89","M73","M74"),("M90","M75","M76"),("M91","M77","M78"),("M92","M79","M80"),("M93","M81","M82"),("M94","M83","M84"),("M95","M85","M86"),("M96","M87","M88")]
-qf=[("M97","M89","M90"),("M98","M91","M92"),("M99","M93","M94"),("M100","M95","M96")];sf=[("M101","M97","M98"),("M102","M99","M100")]
+qf=[("M97","M89","M90"),("M98","M91","M92"),("M99","M93","M94"),("M100","M95","M96")];sf=[("M101","M97","M99"),("M102","M98","M100")]
 oct=np.zeros(NT);cua=np.zeros(NT);sem=np.zeros(NT);fin=np.zeros(NT);champ=np.zeros(NT);U=rng.random((N,31))
 ro=["M73","M74","M75","M76","M77","M78","M79","M80","M81","M82","M83","M84","M85","M86","M87","M88"]
 for t in range(N):
