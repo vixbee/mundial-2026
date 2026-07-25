@@ -10,13 +10,61 @@ Sitio estático que proyecta el Mundial 2026 (avance de grupos, cuadro de elimin
 | `wcdata.json` | Datos del modelo (generado). La página lo relee cada 10 min. |
 | `Proyeccion-Mundial-2026-MAESTRO.xlsx` | Libro Excel con todo (generado). |
 | `fetch_results.py` | Descarga resultados reales de **openfootball** (JSON público, sin API key) → `results.json`. |
-| `gen_html.py` | Corre el modelo (Elo + xG + 20.000 simulaciones) → `wcdata.json`. |
-| `master.py` | Construye el Excel. |
+| `wcbase.py` | **Fuente única de verdad**: calendario, cuadro, resultados reales y construcción del modelo. |
+| `model.py` | El modelo de goles: Dixon-Coles con ataque/defensa y aprendizaje secuencial. |
+| `history.py` | Arma el historial cronológico de partidos jugados (goles + xG) que alimenta el modelo. |
+| `gen_html.py` | Simula el torneo (20.000 veces) → `wcdata.json`. |
+| `master.py` | Construye el Excel leyendo `wcdata.json` (no vuelve a simular). |
 | `write_html.py` | Inyecta los datos en `index.html`. |
+| `model_fit.json` | Hiperparámetros elegidos y calibración (generado; se rehace si cambia el nº de partidos). |
 | `results.json` | Resultados reales (lo reescribe `fetch_results.py`). |
 | `xg.json`, `odds.json` | xG y cuotas de campeón — **manuales** (ver abajo). |
 | `elo.json`, `sched.json`, `fixtures.json` | Ratings Elo, horarios/sedes y fixtures (datos base). |
 | `.github/workflows/actualizar.yml` | El GitHub Action que automatiza todo. |
+
+## El modelo
+
+Cada selección tiene **dos** parámetros, ataque y defensa, en vez de una sola nota de
+fuerza:
+
+```
+lam_local  = exp(mu + ataque[L] - defensa[V] + ventaja_local)
+lam_visita = exp(mu + ataque[V] - defensa[L])
+```
+
+Esto importa porque la versión anterior forzaba que *todos* los partidos sumaran 2.6
+goles esperados y solo repartía ese total según la diferencia de Elo: no podía
+representar a un equipo que ataca bien y defiende mal. Ahora sí (Senegal terminó con
+ataque alto y defensa nula; España, con la mejor defensa del torneo).
+
+Encima van dos correcciones:
+
+- **Dixon-Coles (ρ = −0.13):** el Poisson independiente subestima 0-0 y 1-1. La
+  función τ reajusta esas celdas conservando la masa total de probabilidad.
+- **Aprendizaje secuencial:** tras cada partido los parámetros se mueven por gradiente
+  de la log-verosimilitud, usando el **xG** como observación. Medido fuera de muestra,
+  aprender de los goles *empeora* las predicciones (log-loss 0.856 vs 0.843 sin
+  aprender) y aprender del xG las mejora (0.823). El xG es señal; el marcador es señal
+  más ruido.
+
+### Cómo se valida
+
+`gen_html.py` recorre los partidos en orden cronológico y **predice cada uno usando
+solo los anteriores** antes de aprenderlo (validación prequencial). Eso da una
+log-loss y un Brier honestamente fuera de muestra, que la web muestra en la pestaña
+de Favoritos. Sobre los 100 partidos jugados:
+
+| Modelo | log-loss | Brier |
+|---|---|---|
+| Anterior (Elo estático, total de goles fijo) | 0.843 | 0.488 |
+| Actual (Dixon-Coles + secuencial con xG) | 0.823 | 0.478 |
+
+`K` (velocidad de aprendizaje) y el peso del xG se eligen por esa misma métrica; `ρ` y
+la ventaja de local se **fijan** a valores defendibles en lugar de ajustarse, porque
+con ~100 partidos una rejilla libre los empuja a extremos implausibles.
+
+Advertencia honesta: 2.4% de mejora sobre 100 partidos no es concluyente. La mezcla
+con el mercado (80/20) sigue pesando más que cualquier refinamiento del modelo.
 
 ## Puesta en marcha (una sola vez)
 

@@ -113,22 +113,22 @@ footer{max-width:1080px;margin:0 auto;padding:0 14px 50px}
  <div class="lang"><button id="bes" class="on" onclick="setLang('es')">ES</button><button id="ben" onclick="setLang('en')">EN</button></div>
 </div></header>
 <nav class="tabs"><div class="wrap">
- <button class="on" data-tab="matches" data-t="tab_m"></button>
+ <button data-tab="matches" data-t="tab_m"></button>
  <button data-tab="advance" data-t="tab_a"></button>
  <button data-tab="bracket" data-t="tab_b"></button>
  <button data-tab="fav" data-t="tab_f"></button>
- <button data-tab="ko" data-t="tab_k"></button>
+ <button class="on" data-tab="ko" data-t="tab_k"></button>
 </div></nav>
 <main>
- <div class="legend" data-sec="matches advance">
+ <div class="legend hidden" data-sec="matches advance">
    <span><span class="sw" style="background:var(--green-bg);border:1px solid var(--line)"></span><span data-t="lg_fav"></span></span>
    <span><span class="sw" style="background:var(--amber-bg);border:1px solid var(--line)"></span><span data-t="lg_draw"></span></span>
  </div>
- <section id="matches"></section>
+ <section id="matches" class="hidden"></section>
  <section id="advance" class="hidden"></section>
  <section id="bracket" class="hidden"></section>
  <section id="fav" class="hidden"></section>
- <section id="ko" class="hidden"></section>
+ <section id="ko"></section>
 </main>
 <footer>
  <div class="note" data-t="note"></div>
@@ -142,20 +142,23 @@ const T={
    lg_fav:"Favorito por modelo",lg_draw:"Partido parejo / empate",
    group:"Grupo",home:"L",draw:"E",away:"V",wins:n=>"Gana "+n,drawtxt:"Empate",
    winG:"Gana grupo",adv:"Avanza",r32:"Dieciseisavos (Round of 32)",
-   favttl:"Probabilidad de ser campeón",favNote:"Mezcla 70% mercado + 30% modelo (con xG)",fModel:"modelo",fMkt:"mercado",   tab_k:"Cuadro",roctavos:"Octavos de final",rcuartos:"Cuartos de final",rsemis:"Semifinales",rfinal:"Final",rthird:"Tercer lugar",champLabel:"Campeón proyectado",koNote:"Ruta más probable partido a partido: en cada llave avanza el favorito del modelo. Es un escenario único.",
-   note:"Estimación probabilística generada con un modelo Elo + Poisson sobre el ranking FIFA del 11 de junio de 2026 y 20.000 torneos simulados; con ventaja de local solo para los anfitriones. No es un pronóstico fiable: ignora lesiones, forma y bajas. Los cruces desde octavos usan el orden estándar del cuadro. Para que el botón de descarga funcione, sube el archivo Excel junto a esta página.",
+   favttl:"Probabilidad de ser campeón",favNote:"Mezcla {m}% mercado + {d}% modelo (con xG)",fModel:"modelo",fMkt:"mercado",
+   calib:(F,d)=>`Calibración del modelo sobre los ${F.n} partidos ya jugados, midiendo cada partido <em>antes</em> de que se jugara: log-loss ${F.logloss.toFixed(3)} y Brier ${F.brier.toFixed(3)}, frente a ${F.logloss_base.toFixed(3)} y ${F.brier_base.toFixed(3)} del modelo anterior (${d}% mejor). El modelo actual separa ataque y defensa, corrige la subestimación de empates (Dixon-Coles, ρ=${F.rho}) y reajusta a cada equipo partido a partido con su xG.`,
+   tab_k:"Cuadro",roctavos:"Octavos de final",rcuartos:"Cuartos de final",rsemis:"Semifinales",rfinal:"Final",rthird:"Tercer lugar",champLabel:"Campeón proyectado",koNote:"Ruta más probable partido a partido: en cada llave avanza el favorito del modelo. Es un escenario único.",
+   note:"Estimación probabilística con un modelo Dixon-Coles: cada selección tiene parámetros de ataque y de defensa independientes (el total de goles esperado cambia según el emparejamiento), con corrección para la subestimación de empates y ventaja de local solo para los anfitriones jugando en su país. Los ratings parten del Elo y se reajustan partido a partido con el xG observado; sobre eso se simulan 20.000 torneos condicionados a los resultados reales. No es un pronóstico fiable: ignora lesiones, forma y bajas. Para que el botón de descarga funcione, sube el archivo Excel junto a esta página.",
    dl:"Descargar Excel completo",venueLabel:"Estadio",won:n=>"Ganó "+n,fin:"FINAL",finalLabel:"Resultado final",projShort:"proy.",third:g=>"3.º "+g},
  en:{title:"2026 World Cup Projection",sub:"Real results + xG to Jun 16 · model + market odds · times in Mexico City",
    tab_m:"Matches",tab_a:"Advancement",tab_b:"Knockouts",tab_f:"Favourites",
    lg_fav:"Model favourite",lg_draw:"Tight match / draw",
    group:"Group",home:"H",draw:"D",away:"A",wins:n=>n+" win",drawtxt:"Draw",
    winG:"Win group",adv:"Advance",r32:"Round of 32",
-   favttl:"Probability of winning the title",favNote:"70% market + 30% model (with xG) blend",fModel:"model",fMkt:"market",
+   favttl:"Probability of winning the title",favNote:"{m}% market + {d}% model (with xG) blend",fModel:"model",fMkt:"market",
+   calib:(F,d)=>`Model calibration over the ${F.n} matches played so far, scoring each one <em>before</em> it was played: log-loss ${F.logloss.toFixed(3)} and Brier ${F.brier.toFixed(3)}, against ${F.logloss_base.toFixed(3)} and ${F.brier_base.toFixed(3)} for the previous model (${d}% better). The current model separates attack from defence, corrects the under-prediction of draws (Dixon-Coles, ρ=${F.rho}) and re-rates every team match by match using its xG.`,
    tab_k:"Bracket",roctavos:"Round of 16",rcuartos:"Quarter-finals",rsemis:"Semi-finals",rfinal:"Final",rthird:"Third place",champLabel:"Projected champion",koNote:"Most likely path tie by tie: the model favourite advances each round. A single scenario.",
-   note:"Probabilistic estimate from an Elo + Poisson model on the June 11, 2026 FIFA ranking and 20,000 simulated tournaments, with home advantage only for the host nations. Not a reliable forecast: it ignores injuries, form and absences. Knockout pairings from the Round of 16 use the standard bracket order. For the download button to work, upload the Excel file next to this page.",
+   note:"Probabilistic estimate from a Dixon-Coles model: each team has independent attack and defence parameters (so expected total goals vary by matchup), with a correction for the under-prediction of draws and home advantage only for host nations playing in their own country. Ratings start from Elo and are re-fitted match by match from observed xG; 20,000 tournaments are then simulated conditional on the real results. Not a reliable forecast: it ignores injuries, form and absences. For the download button to work, upload the Excel file next to this page.",
    dl:"Download full Excel",venueLabel:"Venue",won:n=>n+" won",fin:"FINAL",finalLabel:"Final score",projShort:"proj.",third:g=>"3rd "+g}
 };
-let lang="es",tab="matches";
+let lang="es",tab="ko";
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 function nm(o){return lang==="es"?o.es:o.en}
 function pct(x){return Math.round(x*100)+"%"}
@@ -227,11 +230,18 @@ function renderBracket(){
 }
 function renderFav(){
  const mx=DATA.champions[0].p;
- let h=`<div class="gh">${T[lang].favttl}</div><div class="gsub">${T[lang].favNote}</div><div class="card">`;
+ const wb=Math.round((DATA.blend_w!=null?DATA.blend_w:0.8)*100);
+ const note=T[lang].favNote.replace("{m}",wb).replace("{d}",100-wb);
+ let h=`<div class="gh">${T[lang].favttl}</div><div class="gsub">${note}</div><div class="card">`;
  for(const c of DATA.champions){
   h+=`<div class="fav-row"><div class="fn">${nm(c)}</div><div class="fav-bar"><i style="width:${(c.p/mx*100)}%"></i></div><div class="fp">${pct(c.p)}</div></div><div class="fav-sub">${T[lang].fModel} ${pct(c.pmodel)} · ${T[lang].fMkt} ${pct(c.pmkt)}</div>`;
  }
  h+="</div>";
+ const F=DATA.fit;
+ if(F){
+  const d=(100*(F.logloss_base-F.logloss)/F.logloss_base).toFixed(1);
+  h+=`<div class="note" style="margin-top:12px">${T[lang].calib(F,d)}</div>`;
+ }
  $("#fav").innerHTML=h;
 }
 function renderKO(){
@@ -273,7 +283,7 @@ async function loadData(){
   if(r.ok){const j=await r.json(); if(j&&j.groups){DATA=j; renderAll();}}
  }catch(e){/* archivo local o sin red: se conservan los datos incrustados */}
 }
-renderAll();setTab("matches");updateStamp();
+renderAll();setTab("ko");updateStamp();
 loadData();
 setInterval(loadData, 600000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadData();});
